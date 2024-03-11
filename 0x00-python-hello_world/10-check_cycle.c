@@ -8,20 +8,20 @@
  */
 int check_cycle(listint_t *list)
 {
-    if (!list)
-        return (0);
+	listint_t *slow = list;
+	listint_t *fast = list;
 
-    listint_t *runner = list;  // Pointer moves at normal speed
-    listint_t *chaser = list;  // Pointer moves twice as fast
+	if (!list)
+		return (0);
 
-    while (chaser && chaser->next)
-    {
-        runner = runner->next;
-        chaser = chaser->next->next;
-        
-        if (runner == chaser)
-            return (1);  // Cycle detected
-    }
+	while (slow && fast && fast->next)
+	{
+		slow = slow->next;
+		fast = fast->next->next;
+		if (slow == fast)
+			return (1);
+	}
 
-    return (0);  // No cycle found
+	return (0);
 }
+
