@@ -1,23 +1,29 @@
 #!/usr/bin/python3
-"""  a script that lists all State objects that contain the letter a
-from the database hbtn_0e_6_usa """
+"""
+prints all City objects from the database hbtn_0e_14_us
+"""
+
+import sys
+from model_state import Base, State
+from model_city import City
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from model_city import City
-from model_state import State
-import sys
 
 if __name__ == "__main__":
-    user = sys.argv[1]
-    passwd = sys.argv[2]
-    db = sys.argv[3]
-
-    engine = create_engine("mysql+mysqldb://{}:{}@localhost/{}"
-                           .format(user, passwd, db), pool_pre_ping=True)
-
+    engine = create_engine(
+            "mysql+mysqldb://{}:{}@localhost:3306/{}".format(
+                sys.argv[1],
+                sys.argv[2],
+                sys.argv[3]
+                ), pool_pre_ping=True
+            )
+    Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    for city, state in session.query(City, State)\
-            .filter(City.state_id == State.id).order_by(City.id):
-        print("{}: ({}) {}".format(state.name, city.id, city.name))
+    cities = session.query(
+            State.name, City.id, City.name
+            ).filter(State.id == City.state_id)
+
+    for city in cities:
+        print("{}: ({}) {}".format(city[0], city[1], city[2]))
